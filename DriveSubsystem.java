@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  */
 public class DriveSubsystem extends Subsystem {
 	RobotDrive driveTrain = new RobotDrive(RobotMap.LEFT_MOTOR, RobotMap.RIGHT_MOTOR);
-	double acceleration = 0.5;
+	double ACCELERATION = 0.5;
 	
 	double finalMoving = 0;
 	double finalTurning = 0;
@@ -25,18 +25,24 @@ public class DriveSubsystem extends Subsystem {
     }
     
     public void drive(double moving, double turning) {
-    	if (Math.abs(finalMoving) > Math.abs(moving)) {
-    		finalMoving = moving;
+    	
+    	finalMoving = moving * 0.65 + moving/Math.abs(moving)*0.35;
+    	finalTurning = turning;
+    	
+    	if (Math.abs(moving) < 0.05) {
+    		finalMoving = 0;
+    		finalTurning = turning * 0.65 + turning/Math.abs(turning)*0.35;
     	}
     	
-    	if (Math.abs(finalTurning) > Math.abs(turning)) {
-    		finalTurning = turning;
-    	}
     	
-    	finalMoving += (finalMoving-moving)*acceleration;
-    	finalTurning += (finalTurning-turning)*acceleration;
     	
-    	driveTrain.arcadeDrive(finalMoving,finalTurning)
+    	driveTrain.arcadeDrive(-finalMoving,-finalTurning*0.75);
     }
+	
+    public void driveAuto(double left, double right) {
+    	driveTrain.tankDrive(left, right);
+    }
+    
+		
 }
 

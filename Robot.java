@@ -1,17 +1,24 @@
 
 package org.usfirst.frc.team6432.robot;
 
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import org.usfirst.frc.team6432.robot.commands.ExampleCommand;
+import org.usfirst.frc.team6432.robot.commands.AutoCommandLeft;
+import org.usfirst.frc.team6432.robot.commands.AutoCommandRight;
+import org.usfirst.frc.team6432.robot.commands.AutoLeft;
+import org.usfirst.frc.team6432.robot.commands.AutoRight;
+import org.usfirst.frc.team6432.robot.commands.DrivingCommand;
 import org.usfirst.frc.team6432.robot.subsystems.DriveSubsystem;
-import org.usfirst.frc.team6432.robot.subsystems.ExampleSubsystem;
+import org.usfirst.frc.team6432.robot.subsystems.RopeClimberSubsystem;
+
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -23,6 +30,7 @@ import org.usfirst.frc.team6432.robot.subsystems.ExampleSubsystem;
 public class Robot extends IterativeRobot {
 
 	public static DriveSubsystem driveSubsystem;
+	public static RopeClimberSubsystem ropeclimberSubsystem;
 	public static OI oi;
 
 	Command autonomousCommand;
@@ -35,9 +43,18 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 		oi = new OI();
+		driveSubsystem = new DriveSubsystem();
+		ropeclimberSubsystem = new RopeClimberSubsystem();
+		CameraServer.getInstance().startAutomaticCapture();
+    
 		// chooser.addObject("My Auto", new MyAutoCommand());
 		SmartDashboard.putData("Auto mode", chooser);
+		chooser.addDefault("Left Auto",new AutoCommandLeft());
+		chooser.addObject("Right Auto", new AutoCommandRight());
+		
+		
 	}
+	
 
 	/**
 	 * This function is called once each time the robot enters Disabled mode.
@@ -68,7 +85,8 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousInit() {
 		autonomousCommand = chooser.getSelected();
-
+		autonomousCommand.start();
+	
 		/*
 		 * String autoSelected = SmartDashboard.getString("Auto Selector",
 		 * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
@@ -87,6 +105,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousPeriodic() {
 		Scheduler.getInstance().run();
+		
 	}
 
 	@Override
@@ -97,6 +116,9 @@ public class Robot extends IterativeRobot {
 		// this line or comment it out.
 		if (autonomousCommand != null) autonomousCommand.cancel();
 		Joystick joystick = new Joystick(0);
+		DrivingCommand drivingCommand = new DrivingCommand (joystick);
+		drivingCommand.start();
+		
 		
 	}
 

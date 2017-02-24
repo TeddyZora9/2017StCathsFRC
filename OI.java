@@ -1,5 +1,7 @@
 package org.usfirst.frc.team6432.robot;
 
+import org.usfirst.frc.team6432.robot.commands.RopeClimberCommand;
+
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
@@ -36,6 +38,13 @@ public class OI {
 	Button buttonL3 = new JoystickButton(xbox, 9);
 	Button buttonR3 = new JoystickButton(xbox, 10);
 	
+	public OI() {
+		button8.whileHeld(new RopeClimberCommand());
+	}
+}
+	
+	
+
 
 	
 	
@@ -68,4 +77,4 @@ public class OI {
 	// Start the command when the button is released and let it run the command
 	// until it is finished as determined by it's isFinished method.
 	// button.whenReleased(new ExampleCommand());
-}
+
